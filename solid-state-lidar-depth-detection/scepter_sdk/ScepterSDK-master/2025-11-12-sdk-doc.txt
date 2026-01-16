@@ -1,0 +1,487 @@
+2. BaseSDK (C/C++)
+2.1. 基础介绍
+BaseSDK 包含 Windows，Ubuntu16.04，Ubuntu，AArch64 开发包部分，目录结构如下：
+
+Windows
+
+
+
+
+
+
+
+
+
+Ubuntu
+
+
+
+
+
+
+
+
+
+AArch64
+AArch64 目录包含 64 位 Arm-Linux 开发包，使用标准编译器 aarch64-linux-gnu(v7.5.0)。
+
+AArch64Contents
+
+Include：主要包含 SDK 的通用头文件：Scepter_api.h，Scepter_define.h，Scepter_enums.h，Scepter_types.h。
+
+Lib：主要包含 SDK 的 lib 文件，如 Scepter_api.so。
+
+PrecompiledSamples：FrameViewer 可查看深度摄像头的深度图像和 IR 图像，针对不同设备，可自行编译 Samples 目录中的 FrameViewer 进行相应展示。
+
+Samples：主要包含使用 ScepterSDK 开发的例程。
+
+README：SDK 的内容简介。
+
+ReleaseNotes：SDK 的版本发布说明。
+
+2.2. 项目配置
+Windows
+
+
+
+新建应用项目工程，设置工程属性，将 Include 目录添加到包含目录中，将 Lib 目录添加到库目录中。
+
+项目配置
+
+
+
+
+
+
+
+
+
+
+Ubuntu
+
+
+
+
+AArch64
+使用 ScepterSDK 开发新的项目，需要在 CMakeList 中将 SDK 中的 Include 目录加入到包含路径:
+
+include_directories("../../../Include")
+CopyErrorOK!
+将 Lib 目录加入到链接搜索路径，并链接 libScepter_api.so。
+
+LINK_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/../../../Lib/")
+CopyErrorOK!
+具体内容可参考 Samples 中的例程配置。
+
+项目配置
+
+2.3. 基础例程
+基础例程介绍 SDK 的单个特性 API 接口的使用。为了使用户可以快速的熟悉使用，例程根据产品进行分类。
+
+例程包含打开图像数据流、图像获取、软/硬触发、点云转换与保存等 API 接口的使用。
+
+BaseSDKSamples
+
+接下来，我们将详细介绍每个例程的功能。
+
+ColorExposureTimeSetGet                         //设置获取设备彩色传感器曝光时间
+ColorResolutionChange                           //更改设备彩色传感器分辨率
+DevHotPlugCallbackC                             //C 设置设备热插拔回调
+DevHotPlugCallbackCpp                           //C++设置设备热插拔回调
+DeviceConnectByIP                               //设置设备通过 IP 地址链接
+DeviceConnectBySN                               //设置设备通过设备 SN 连接
+DeviceHWTriggerMode                             //设置设备为硬触发模式
+DeviceImportParamInitFile                       //初始化参数文件导入到相机中
+DeviceInfoGet                                   //获取设备 SN、IP 地址、固件版本信息
+DeviceIPAndSubnetMaskSet                        //设置设备静态IP、子网掩码（非DHCP）
+DeviceParamSetGet                               //获取设备内外参、畸变参数，设置、获取设备 GmmaGian 值
+DeviceSearchAndConnect                          //搜索并连接设备
+DeviceSetFrameRate                              //设置设备帧率
+DeviceSetNTP                                    //设置NTP对时
+DeviceSetParamsByJson                           //通过 Json 设置设备参数
+DeviceSetPTP                                    //设置PTP对时
+DeviceSetSoftwareTriggerParameter               //设置软触发融合图像帧数
+DeviceStartStopStreaming                        //开始与停止设备数据流
+DeviceSWTriggerMode                             //设置设备为软触发模式
+DeviceUpgradeFirmWare                           //升级设备固件
+FrameCaptureAndSave                             //捕获与保存设备图像
+IRGMMCorrectionSetGet                           //设置获取设备 ToF IR校正参数
+MultiConnection                                 //多设备连接
+MultiConnectionInMultiThread                    //在多线程中多设备连接
+PointCloudCaptureAndSave                        //捕获与保存点云
+PointCloudCaptureAndSaveDepthImgToColorSensor   //捕获点云并且将其保存到彩色图像传感器
+PointCloudVectorAndSave                         //捕获与保存 ROI 区域中的点云
+PointCloudVectorAndSaveDepthImgToColorSensor    //捕获 ROI 区域中的点云并且将其保存到彩色图像传感器
+SingleFrameDelayTest                            //触发模式下获取单帧图像耗时测试
+ToFExposureTimeOfHDRSetGet                      //使能HDR设置获取设备 ToF 曝光时间
+ToFExposureTimeOfWDRSetGet                      //使能WDR设置获取设备 ToF 曝光时间
+ToFExposureTimeSetGet                           //设置获取设备 ToF 曝光时间
+ToFFiltersSetGet                                //设置获取设备 ToF 滤波开关
+TransformColorImgToDepthSensorFrame             //将彩色图像对齐到设备的深度图像空间
+TransformDepthImgToColorSensorFrame             //将深度图像对齐到设备的彩色图像空间
+CopyErrorOK!
+下面，我们以单个产品的单独例程为例，演示其编译运行的过程：
+
+Windows
+
+
+
+
+
+
+Ubuntu
+
+
+
+
+AArch64
+根据实际产品选择对应的 sample，以 NYX650 产品编译 DeviceConnectBySN 为例
+
+> cd ScepterSDK/AArch64/Samples/Base/NYX650/
+> mkdir build
+> cd build/
+> cmake ../
+> make
+CopyErrorOK!
+Compilation Compilation
+
+编译完成，输出路径为 PrecompiledSamples，进入目录后运行。
+
+> cd ScepterSDK/AArch64/PrecompiledSamples/NYX650_Samples/
+> ./DeviceConnectBySN
+CopyErrorOK!
+Execution
+
+2.4. OpenCV 例程
+OpenCV 例程用于展示如何搭配第三方库使用 ScepterSDK。例程使用 OpenCV 的图像映射功能展示彩色深度图像、IR 与 Color 图像。
+
+Windows
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Ubuntu
+
+
+
+
+
+
+
+AArch64
+为方便您直接使用，Samples/OpenCV/Thirdparty 目录下已经包含预编译好的 OpenCV 3.4.1 版本，无需您额外下载和编译。
+
+AArch64OpenCV
+
+选用此版本的原因是在 ScepterSDK 中，OpenCVSample 采用了 OpenCV 3.4.1 版本进行开发。您可以根据实际的编程需求，选择使用不同版本的 OpenCV。
+
+AArch64 端常用 headless 模式，该模式下运行 OpenCV 会出错。OpenCV 在 headless 模式下运行可能遇到的问题包括：依赖的图形库不可用、图形环境配置错误、或者 OpenCV 的某些功能依赖于图形处理能力。
+
+根据实际产品选择对应的 sample，以 NYX650 为例编译 OpenCV 显示例程
+
+> cd ScepterSDK/AArch64/Samples/OpenCV/NYX650
+> mkdir build
+> cd build/
+> cmake ../
+> make
+CopyErrorOK!
+AArch64CompilationOpenCV
+
+运行编译成功后的 Demo
+
+> cd ScepterSDK/AArch64/PrecompiledSamples/
+> ./NYX650_OpenCVSample
+CopyErrorOK!
+AArch64ExecutionOpenCV
+
+2.5. API 参考
+不同型号产品对应的枚举值个数可能不同，请以实际枚举值为准。
+
+Enum 数据类型
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Struct 数据类型
+2.5.2.1. ScVector3f
+功能：
+
+3 维点坐标，单位为毫米。
+
+成员：
+
+typedef struct
+{
+    float x;   //表示 X 轴方向的坐标值
+    float y;   //表示 Y 轴方向的坐标值
+    float z;   //表示 Z 轴方向的坐标值
+} ScVector3f;
+CopyErrorOK!
+2.5.2.2. ScVector2u16
+功能：
+
+2 维点坐标。
+
+成员：
+
+typedef struct
+{
+    uint16_t x;   //表示 X 轴方向的坐标值
+    uint16_t y;   //表示 Y 轴方向的坐标值
+} ScVector2u16;
+CopyErrorOK!
+2.5.2.3. ScDepthVector3
+功能：
+
+深度图像的像素点表示。
+
+成员：
+
+typedef struct
+{
+    int32_t      depthX;   //表示图像坐标系下，X 轴方向的坐标值
+    int32_t      depthY;   //表示图像坐标系下，Y 轴方向的坐标值
+    ScDepthPixel depthZ;   //表示像素坐标（depthX，depthY）处的深度值，单位为毫米
+} ScDepthVector3;
+CopyErrorOK!
+2.5.2.4. ScResolution
+功能：
+
+图像分辨率。
+
+成员：
+
+typedef struct
+{
+    int32_t width;   //表示图像的宽度
+    int32_t height;  //表示图像的高度
+} ScResolution;
+CopyErrorOK!
+2.5.2.5. ScResolutionList
+功能：
+
+支持的图像分辨率。
+
+成员：
+
+typedef struct
+{
+    int32_t      count;          //表示支持的图像分辨率的数量
+    ScResolution resolution[6];  //表示支持的图像分辨率的信息
+} ScResolutionList;
+CopyErrorOK!
+2.5.2.6. ScSensorIntrinsicParameters
+功能：
+
+传感器的镜头内参和畸变参数。内参通常用于点云的计算，畸变参数用于图像反畸变算法使用。
+
+SDK 中已经实现深度图像到点云的转换及图像反畸变的功能，请参考例程使用相关接口。
+
+成员：
+
+typedef struct
+{
+    double fx;   //x方向的焦距，单位为像素
+    double fy;   //y方向的焦距，单位为像素
+    double cx;   //主点的x坐标，图像的中心，单位为像素
+    double cy;   //主点的y坐标，图像的中心，单位为像素
+    double k1;   //径向畸变, 1st
+    double k2;   //径向畸变, 2nd
+    double p1;   //轴向畸变
+    double p2;   //轴向畸变
+    double k3;   //径向畸变, 3rd
+    double k4;   //径向畸变, 4st
+    double k5;   //径向畸变, 5nd
+    double k6;   //径向畸变, 6rd
+} ScSensorIntrinsicParameters;
+CopyErrorOK!
+2.5.2.7. ScSensorExtrinsicParameters
+功能：
+
+相机外参 R 与 T，用于 depth 与 rgb 图像的对齐，参考公式如下:
+
+ScSensorExtrinsicParameters
+
+成员：
+
+typedef struct
+{
+    double rotation[9];      //3×3 的旋转矩阵
+    double translation[3];   //3×1 平移矩阵
+} ScSensorExtrinsicParameters;
+CopyErrorOK!
+2.5.2.8. ScFrame
+功能：
+
+图像信息。
+
+成员：
+
+typedef struct
+{
+    uint32_t      frameIndex;        //表示图像帧索引号
+    ScFrameType   frameType;         //表示图像数据类型
+    ScPixelFormat pixelFormat;       //表示像素类型
+    uint8_t*      pFrameData;        //表示指向图像数据缓存的指针
+    uint32_t      dataLen;           //表示图像数据的长度，单位为字节
+    float         exposureTime;      //表示曝光时间，单位为毫秒
+    uint8_t       depthRange;        //表示当前帧的深度范围，仅对深度图像有效
+    uint16_t      width;             //表示图像宽度
+    uint16_t      height;            //表示图像高度
+    uint64_t      deviceTimestamp;   //表示帧在设备上生成时的时间戳，不包括帧处理和传输时间
+} ScFrame;
+CopyErrorOK!
+2.5.2.9. ScFrameReady
+功能：
+
+图像数据是否就绪（1 代表就绪，0 代表未就绪）。
+
+枚举值：
+
+typedef struct
+{
+    uint32_t depth            : 1;    //表示深度图像数据是否就绪
+    uint32_t ir               : 1;    //表示灰度图像数据是否就绪
+    uint32_t color            : 1;    //表示彩色图像数据是否就绪
+    uint32_t transformedColor : 1;    //表示对齐到深度传感器空间的彩色图像是否就绪
+    uint32_t transformedDepth : 1;    //表示对齐到彩色传感器空间的深度图像是否就绪
+    uint32_t reserved         : 27;   //预留位
+} ScFrameReady;
+CopyErrorOK!
+2.5.2.10. ScDeviceInfo
+功能：
+
+设备信息。
+
+成员：
+
+typedef struct
+{
+    char            productName[64];    //表示设备的产品名称
+    char            uri[256];           //表示设备的标识符
+    char            alias[64];          //表示设备的别名
+    char            serialNumber[64];   //表示设备的序列号
+    char            ip[17];             //表示设备的 IP 地址
+    ScConnectStatus status;             //表示设备连接状态
+} ScDeviceInfo;
+CopyErrorOK!
+2.5.2.11. ScTimeFilterParams
+功能：
+
+时间滤波参数。
+
+成员：
+
+typedef struct
+{
+    int32_t threshold;   //表示滤波阈值，[1，6]，值越大，滤波效果越明显，点云抖动越小
+    bool enable;         //表示滤波是否打开，true 代表打开，false 代表关闭
+} ScTimeFilterParams;
+CopyErrorOK!
+2.5.2.12. ScConfidenceFilterParams
+功能：
+
+置信度滤波参数。
+
+成员：
+
+typedef struct
+{
+    int32_t threshold;   //表示滤波阈值，[1，100]，数值越大，过滤效果越明显，过滤掉的点数越多
+    bool enable;         //表示滤波是否打开，true 代表打开，false 代表关闭
+} ScConfidenceFilterParams;
+CopyErrorOK!
+2.5.2.13. ScFlyingPixelFilterParams
+功能：
+
+去飞点滤波参数。
+
+成员：
+
+typedef struct
+{
+    int32_t threshold;   //表示滤波阈值，[0，16]，数值越大，过滤效果越明显，过滤掉的点数越多
+    bool enable;         //表示滤波是否打开，true 代表打开，false 代表关闭
+} ScFlyingPixelFilterParams;
+CopyErrorOK!
+2.5.2.14. ScIRGMMCorrectionParams
+功能：
+
+IR gain 值校正参数。
+
+成员：
+
+typedef struct
+{
+    int32_t threshold;   //表示滤波阈值，[1，100]，数值越大，校正效果越明显
+    bool enable;         //表示滤波是否打开，true 代表打开，false 代表关闭
+} ScIRGMMCorrectionParams;
+CopyErrorOK!
+2.5.2.15. ScInputSignalParamsForHWTrigger
+功能：
+
+硬件触发的输入信号参数。
+
+成员：
+
+typedef struct
+{
+    uint16_t width;                  //表示输入信号宽度，阈值[1，65535]
+    uint16_t interval;               //表示输入信号的间隔，阈值[34000，65535]
+    uint8_t  polarity;               //表示电平有效性，[0，1]，0表示低电平有效，1表示高电平有效
+} ScInputSignalParamsForHWTrigger;
+CopyErrorOK!
+2.5.2.16. ScOutputSignalParams
+功能：
+
+输出信号参数。
+
+成员：
+
+typedef struct
+{
+    uint16_t width;       //表示输入信号宽度，阈值[1，65535]
+    uint16_t delay;       //表示输出信号的延迟时间，阈值[0，65535]
+    uint8_t  polarity;    //表示电平有效性，[0，1]，0表示低电平有效，1表示高电平有效
+} ScOutputSignalParams;
+CopyErrorOK!
+2.5.2.17. ScTimeSyncConfig
+功能：
+
+对时参数。
+
+成员：
+
+typedef struct
+{
+    uint8_t flag;     //!< 0:表示关闭对时，1:表示开启NTP对时，2:表示开启PTP对时，只有NTP对时需要IP
+    uint8_t ip[16];   //!< 只有NTP对时需要ip
+} ScTimeSyncConfig;

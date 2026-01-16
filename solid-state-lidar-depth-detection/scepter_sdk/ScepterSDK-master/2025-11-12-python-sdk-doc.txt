@@ -1,0 +1,423 @@
+3.1. Python
+3.1.1. 基础介绍
+Python SDK 目录结构如下：
+
+PythonContents
+
+API：主要包含 SDK 的通用头文件：Scepter_api.py，Scepter_define.py，Scepter_enums.py，Scepter_types.py。
+
+Samples：主要包含使用 ScepterSDK 开发的例程。
+
+README.md：SDK 的内容简介。
+
+3.1.2. 项目配置
+在运行 ScepterSDK 之前，请确保您的 Python 版本为 3.8 或更高版本，并已安装 ctypes、numpy 模块。在大多数 Python 发行版中，ctypes 都是作为内置模块存在的，因此我们无需额外安装。
+
+Python已验证版本：3.8/3.9/3.10/3.11/3.12
+
+> pip install numpy
+CopyErrorOK!
+使用 ScepterSDK 开发新的项目，需要使用英文路径。针对不同的操作系统，需要同时复制 SDK 中的 Python 文件夹和对应系统的文件夹。API 文件夹中的 Scepter_api.py 会自动读取相机的 libScepter_api.so 或 Scepter_api.dll 库文件。
+
+if system_ == 'linux':
+   if machine_ == 'x86_64':
+      os_info = os.uname()
+      print('os_info:',type(os_info))
+      system_info = os_info.version
+      print('version:',system_info)
+      if system_info.find('18.04') != -1 or system_info.find('20.04') != -1:
+         libpath = (os.path.abspath(os.path.dirname(os.getcwd()) + os.path.sep + "../../../../BaseSDK/"))+"/Ubuntu18.04/Lib/libScepter_api.so"
+         print(libpath)
+         self.sc_cam_lib = cdll.LoadLibrary(libpath)
+      else:
+         libpath = (os.path.abspath(os.path.dirname(os.getcwd()) + os.path.sep + "../../../../BaseSDK/"))+"/Ubuntu16.04/Lib/libScepter_api.so"
+         print(libpath)
+         self.sc_cam_lib = cdll.LoadLibrary(libpath)
+      elif machine_ == 'aarch64':
+         libpath = (os.path.abspath(os.path.dirname(os.getcwd()) + os.path.sep + "../../../../BaseSDK/"))+"/AArch64/Lib/libScepter_api.so"
+         print(libpath)
+         self.sc_cam_lib = cdll.LoadLibrary(libpath)
+   else:
+      print('do not supported OS', system_, machine_)
+      exit()
+elif platform.system() == 'Windows':
+   if machine_ == 'amd64':
+      if architecture_ == '64bit':
+         libpath = (os.path.abspath(os.path.dirname(os.getcwd()) + os.path.sep + "../../../../BaseSDK/"))+"/Windows/Bin/x64/Scepter_api.dll"
+         print(libpath)
+         elf.sc_cam_lib = cdll.LoadLibrary(libpath)
+   else:
+      libpath = (os.path.abspath(os.path.dirname(os.getcwd()) + os.path.sep + "../../../../BaseSDK/"))+"/Windows/Bin/x86/Scepter_api.dll"
+      print(libpath)
+      self.sc_cam_lib = cdll.LoadLibrary(libpath)
+   else:
+      print('do not supported OS', system_, machine_)
+      exit()
+else:
+   print('do not supported OS', system_, machine_)
+   exit()
+CopyErrorOK!
+3.1.3. 基础例程
+基础例程介绍 SDK 的单个特性 API 接口的使用。为了使用户可以快速的熟悉使用，例程根据产品进行分类。
+
+例程包含打开图像数据流、图像获取、软/硬触发、点云转换与保存等 API 接口的使用。
+
+PythonSamples
+
+接下来，我们将详细介绍每个例程的功能。
+
+ColorExposureTimeSetGet                         #设置获取设备彩色传感器曝光时间
+ColorResolutionChange                           #更改设备彩色传感器分辨率
+DevHotPlugCallback                              #设置设备热插拔回调
+DeviceConnectByIP                               #设置设备通过 IP 地址链接
+DeviceConnectBySN                               #设置设备通过设备 SN 连接
+DeviceHWTriggerMode                             #设置设备为硬触发模式
+DeviceImportParamInitFile                       #初始化参数文件导入到相机中
+DeviceInfoGet                                   #获取设备 SN、IP 地址、固件版本信息
+DeviceIPAndSubnetMaskSet                        #设置设备静态IP、子网掩码（非DHCP）
+DeviceParamSetGet                               #获取设备内外参、畸变参数，设置、获取设备 GmmaGian 值
+DeviceSearchAndConnect                          #搜索并连接设备
+DeviceSetFrameRate                              #设置设备帧率
+DeviceSetNTP                                    #设置NTP对时
+DeviceSetParamsByJson                           #通过 Json 设置设备参数
+DeviceSetPTP                                    #设置PTP对时
+DeviceSetSoftwareTriggerParameter               #设置软触发融合图像帧数
+DeviceStartStopStreaming                        #开始与停止设备数据流
+DeviceSWTriggerMode                             #设置设备为软触发模式
+DeviceUpgradeFirmWare                           #升级设备固件
+FrameCaptureAndSave                             #捕获与保存设备图像
+IRGMMCorrectionSetGet                           #设置获取设备 ToF IR校正参数
+MultiConnection                                 #多设备连接
+PointCloudCaptureAndSave                        #捕获与保存点云
+PointCloudCaptureAndSaveDepthImgToColorSensor   #捕获点云并且将其保存到彩色图像传感器
+PointCloudVectorAndSave                         #捕获与保存 ROI 区域中的点云
+PointCloudVectorAndSaveDepthImgToColorSensor    #捕获 ROI 区域中的点云并且将其保存到彩色图像传感器
+SingleFrameDelayTest                            #触发模式下获取单帧图像耗时测试
+ToFExposureTimeOfHDRSetGet                      #使能HDR设置获取设备 ToF 曝光时间
+ToFExposureTimeOfWDRSetGet                      #使能WDR设置获取设备 ToF 曝光时间
+ToFExposureTimeSetGet                           #设置获取设备 ToF 曝光时间
+ToFFiltersSetGet                                #设置获取设备 ToF 滤波开关
+TransformColorImgToDepthSensorFrame             #将彩色图像对齐到设备的深度图像空间
+TransformDepthImgToColorSensorFrame             #将深度图像对齐到设备的彩色图像空间
+FrameViewer                                     #设备的OpenCV例程 
+CopyErrorOK!
+下面，我们以单个产品的单独例程为例，演示其编译运行的过程：
+
+根据实际产品选择对应的 sample，以 NYX650 产品编译 DeviceConnectBySN 为例
+
+PythonDeviceConnectBySN
+
+编译完成，调试运行。
+
+> cd ScepterSDK\Python\Samples\NYX650\DeviceConnectBySN
+> python DeviceConnectBySN.py
+CopyErrorOK!
+结果如下图：
+
+PythonDeviceConnectBySNResult
+
+3.1.4. OpenCV 例程
+OpenCV 例程用于展示如何搭配第三方库使用 ScepterSDK。例程使用 OpenCV 的图像映射功能展示彩色深度图像、IR 与 Color 图像。
+
+安装 opencv-python 模块。
+
+> pip install opencv-python
+CopyErrorOK!
+根据实际产品选择对应的 sample，以 NYX650 为例
+
+PythonOpenCV
+
+运行 OpenCV 显示例程
+
+> cd ScepterSDK\Python\Samples\NYX650\FrameViewer
+> python FrameViewer.py
+CopyErrorOK!
+PythonOpenCVResult
+
+3.1.5. API 参考
+不同型号产品对应的枚举值个数可能不同，请以实际枚举值为准。
+
+Enum 数据类型
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Struct 数据类型
+3.1.5.2.1. ScRGB888Pixel
+功能：
+
+彩色图像像素类型 RGB888。
+
+成员：
+
+class ScRGB888Pixel(Structure):
+    _pack_ = 1
+    _fields_ = [("r", c_uint8),     #表示红色通道
+                ("g", c_uint8),     #表示绿色通道
+                ("b", c_uint8)]     #表示蓝色通道
+CopyErrorOK!
+3.1.5.2.2. ScBGR888Pixel
+彩色图像像素类型 BGR888。
+
+成员：
+
+class ScBGR888Pixel(Structure):
+    _pack_ = 1
+    _fields_ = [("b", c_uint8),     #表示蓝色通道
+                ("g", c_uint8),     #表示绿色通道
+                ("r", c_uint8)]     #表示红色通道
+CopyErrorOK!
+3.1.5.2.3. ScVector3f
+功能：
+
+3 维点坐标，单位为毫米。
+
+成员：
+
+class ScVector3f(Structure):
+    _pack_ = 1
+    _fields_ = [("x", c_float),     #表示 X 轴方向的坐标值
+                ("y", c_float),     #表示 Y 轴方向的坐标值
+                ("z", c_float)]     #表示 Z 轴方向的坐标值
+CopyErrorOK!
+3.1.5.2.4. ScVector2u16
+功能：
+
+2 维点坐标。
+
+成员：
+
+class ScVector2u16(Structure):
+    _pack_ = 1
+    _fields_ = [("x", c_uint16),    #表示 X 轴方向的坐标值
+                ("y", c_uint16)]    #表示 Y 轴方向的坐标值
+CopyErrorOK!
+3.1.5.2.5. ScDepthVector3
+功能：
+
+深度图像的像素点表示。
+
+成员：
+
+class ScDepthVector3(Structure):
+    _pack_ = 1
+    _fields_ = [("depthX", c_int),     #表示图像坐标系下，X 轴方向的坐标值
+                ("depthY", c_int),     #表示图像坐标系下，Y 轴方向的坐标值
+                ("depthZ", c_uint16)]  #表示像素坐标（depthX，depthY）处的深度值，单位为毫米
+CopyErrorOK!
+3.1.5.2.6. ScResolution
+功能：
+
+图像分辨率。
+
+成员：
+
+class ScResolution(Structure):
+    _pack_ = 1
+    _fields_ = [("width", c_int),      #表示图像的宽度
+                ("height", c_int)]     #表示图像的高度
+CopyErrorOK!
+3.1.5.2.7. ScResolutionList
+功能：
+
+支持的图像分辨率。
+
+成员：
+
+class ScResolutionList(Structure):
+    _pack_ = 1
+    _fields_ = [("count", c_int),                     #表示支持的图像分辨率的数量
+                ("resolution", ScResolution * 6)]     #表示支持的图像分辨率的信息
+CopyErrorOK!
+3.1.5.2.8. ScSensorIntrinsicParameters
+功能：
+
+传感器的镜头内参和畸变参数。内参通常用于点云的计算，畸变参数用于图像反畸变算法使用。
+
+SDK 中已经实现深度图像到点云的转换及图像反畸变的功能，请参考例程使用相关接口。
+
+成员：
+
+class ScSensorIntrinsicParameters(Structure):
+    _pack_ = 1
+    _fields_ = [("fx", c_double),      #x方向的焦距，单位为像素
+                ("fy", c_double),      #y方向的焦距，单位为像素
+                ("cx", c_double),      #主点的x坐标，图像的中心，单位为像素
+                ("cy", c_double),      #主点的y坐标，图像的中心，单位为像素
+                ("k1", c_double),      #径向畸变, 1st
+                ("k2", c_double),      #径向畸变, 2nd
+                ("p1", c_double),      #轴向畸变
+                ("p2", c_double),      #轴向畸变
+                ("k3", c_double),      #径向畸变, 3rd
+                ("k4", c_double),      #径向畸变, 4st
+                ("k5", c_double),      #径向畸变, 5nd
+                ("k6", c_double)]      #径向畸变, 6rd
+CopyErrorOK!
+3.1.5.2.9. ScSensorExtrinsicParameters
+功能：
+
+相机外参 R 与 T，用于 depth 与 rgb 图像的对齐，参考公式如下:
+
+ScSensorExtrinsicParameters
+
+成员：
+
+class ScSensorExtrinsicParameters(Structure):
+    _pack_ = 1
+    _fields_ = [("rotation", c_double * 9),        #3×3 的旋转矩阵
+                ("translation", c_double * 3)]     #3×1 平移矩阵
+CopyErrorOK!
+3.1.5.2.10. ScTimeStamp
+功能：
+
+表示图像时间戳。
+
+成员：
+
+class ScTimeStamp(Structure):
+    _pack_ = 1
+    _fields_ = [("tm_sec", c_uint16),     #秒
+                ("tm_min", c_uint16),     #分钟
+                ("tm_hour", c_uint16),    #小时
+                ("tm_msec", c_uint16)]    #毫秒
+CopyErrorOK!
+3.1.5.2.11. ScFrame
+功能：
+
+图像信息。
+
+成员：
+
+class ScFrame(Structure):
+    _pack_ = 1
+    _fields_ = [("frameIndex", c_uint32),             #表示图像帧索引号
+                ("frameType", c_int32),               #表示图像数据类型
+                ("pixelFormat", c_int32),             #表示像素类型
+                ("pFrameData", POINTER(c_uint8)),     #表示指向图像数据缓存的指针
+                ("dataLen", c_uint32),                #表示图像数据的长度，单位为字节
+                ("exposureTime", c_float),            #表示曝光时间，单位为毫秒
+                ("depthRange", c_uint8),              #表示当前帧的深度范围，仅对深度图像有效
+                ("width", c_uint16),                  #表示图像宽度
+                ("height", c_uint16),                 #表示图像高度
+                ("hardwaretimestamp", c_uint64)]      #表示帧在设备上生成时的时间戳，不包括帧处理和传输时间
+CopyErrorOK!
+3.1.5.2.12. ScFrameReady
+功能：
+
+图像数据是否就绪（1 代表就绪，0 代表未就绪）。
+
+枚举值：
+
+class ScFrameReady(Structure):
+    _pack_ = 1
+    _fields_ = [("depth", c_uint, 1),                 #表示深度图像数据是否就绪
+                ("ir", c_uint, 1),                    #表示灰度图像数据是否就绪
+                ("color", c_uint, 1),                 #表示彩色图像数据是否就绪
+                ("transformedColor", c_uint, 1),      #表示对齐到深度传感器空间的彩色图像是否就绪
+                ("transformedDepth", c_uint, 1),      #表示对齐到彩色传感器空间的深度图像是否就绪
+                ("reserved", c_uint, 27)]             #预留位
+CopyErrorOK!
+3.1.5.2.13. ScDeviceInfo
+功能：
+
+设备信息。
+
+成员：
+
+class ScDeviceInfo(Structure):
+    _pack_ = 1
+    _fields_ = [("productName", c_char * 64),      #表示设备的产品名称
+                ("serialNumber", c_char * 64),     #表示设备的序列号
+                ("ip", c_char * 17),               #表示设备的 IP 地址
+                ("status", c_int32)]               #表示设备连接状态
+CopyErrorOK!
+3.1.5.2.14. ScConfidenceFilterParams
+功能：
+
+置信度滤波参数。
+
+成员：
+
+class ScConfidenceFilterParams(Structure):
+    _pack_ = 1
+    _fields_ = [("threshold", c_int32),      #表示滤波阈值，[1，100]，数值越大，过滤效果越明显，过滤掉的点数越多
+                ("enable", c_bool)]          #表示滤波是否打开，true 代表打开，false 代表关闭
+CopyErrorOK!
+3.1.5.2.15. ScFlyingPixelFilterParams
+功能：
+
+去飞点滤波参数。
+
+成员：
+
+class ScFlyingPixelFilterParams(Structure):
+    _pack_ = 1
+    _fields_ = [("threshold", c_int32),      #表示滤波阈值，[0，16]，数值越大，过滤效果越明显，过滤掉的点数越多
+                ("enable", c_bool)]          #表示滤波是否打开，true 代表打开，false 代表关闭
+CopyErrorOK!
+3.1.5.2.16. ScTimeFilterParams
+功能：
+
+时间滤波参数。
+
+成员：
+
+class ScTimeFilterParams(Structure):
+    _pack_ = 1
+    _fields_ = [("threshold", c_int32),      #表示滤波阈值，[1，6]，值越大，滤波效果越明显，点云抖动越小
+                ("enable", c_bool)]          #表示滤波是否打开，true 代表打开，false 代表关闭
+CopyErrorOK!
+3.1.5.2.17. ScIRGMMCorrectionParams
+功能：
+
+IR gain 值校正参数。
+
+成员：
+
+class ScIRGMMCorrectionParams(Structure):
+    _pack_ = 1
+    _fields_ = [("threshold", c_int32),      #表示滤波阈值，[0，100]，数值越大，校正效果越明显
+                ("enable", c_bool)]          #表示滤波是否打开，true 代表打开，false 代表关闭
+CopyErrorOK!
+3.1.5.2.18. ScInputSignalParamsForHWTrigger
+功能：
+
+IR gain 值校正参数。
+
+成员：
+
+class ScInputSignalParamsForHWTrigger(Structure):
+    _pack_ = 1
+    _fields_ = [("width", c_uint16),        #表示输入信号宽度，阈值[1，65535]
+                ("interval", c_uint16),     #表示输入信号的间隔，阈值[34000，65535]
+                ("polarity", c_uint8)]        #表示电平有效性，[0，1]，0表示低电平有效，1表示高电平有效
+CopyErrorOK!
+3.1.5.2.19. ScTimeSyncConfig
+功能：
+
+IR gain 值校正参数。
+
+成员：
+
+class ScTimeSyncConfig(Structure):
+    _pack_ = 1
+    _fields_ = [("flag", c_uint8),            #0:表示关闭对时，1:表示开启NTP对时，2:表示开启PTP对时，只有NTP对时需要IP
+                ("ip", c_uint8 * 16)]       #只有NTP对时需要ip
+CopyErrorOK!
